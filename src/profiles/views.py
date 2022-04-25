@@ -2,6 +2,7 @@ from django.contrib.auth.hashers import make_password
 from django.db.models import Q
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from django.db.utils import IntegrityError
 
@@ -54,13 +55,13 @@ class InviteSendView(CreateListDestroy):
         q = (Q(from_user=request.user) & Q(to_user=kwargs['pk'])) | (
                 Q(from_user=kwargs['pk']) & Q(to_user=request.user))
         if Invite.objects.filter(q).exists():
-            return Response({'error': 'Invite already exist'}, status=status.HTTP_409_CONFLICT)
+            return Response({'error': 'Invite already exist'}, status=status.HTTP_404_NOT_FOUND)
         if request.user.pk == kwargs['pk']:
-            return Response({'error': 'You can not invite yourself'}, status=status.HTTP_409_CONFLICT)
+            return Response({'error': 'You can not invite yourself'}, status=status.HTTP_404_NOT_FOUND)
         try:
             Invite.objects.create(from_user_id=self.request.user.pk, to_user_id=kwargs['pk'])
         except IntegrityError:
-            return Response({'error': 'Incorrect data to send invite'}, status=status.HTTP_409_CONFLICT)
+            return Response({'error': 'Incorrect data to send invite'}, status=status.HTTP_404_NOT_FOUND)
         return Response({'msg': 'created successfully'}, status=status.HTTP_201_CREATED)
 
 
@@ -72,3 +73,20 @@ class InviteReceiveView(ListDestroy):
 
     def get_queryset(self):
         return Invite.objects.filter(to_user=self.request.user)
+
+
+class AcceptOfferView(APIView):
+    """ Accept offer and Add into friend
+    """
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, pk):
+        try:
+            _invite = Invite.objects.select_related('from_user').get(pk=pk, to_user=request.user)
+        except Invite.DoesNotExist:
+            return Response({'error': 'Invite does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        _user = SecureUser.objects.get(pk=request.user.pk)
+        _user.safe_user.add(_invite.from_user)
+        _user.save()
+        _invite.delete()
+        return Response({'msg': 'User added successfully'}, status=status.HTTP_201_CREATED)

@@ -13,4 +13,5 @@ urlpatterns = [
                   path("invite/receive/", views.InviteReceiveView.as_view({'get': 'list'}), name="list_invite_receive"),
                   path("invite/receive/<int:pk>/", views.InviteReceiveView.as_view({'delete': 'destroy'}),
                        name="create_invite_receive"),
+                  path("invite/receive/accept/<int:pk>/", views.AcceptOfferView.as_view(), name='accept_offer'),
               ] + router.urls
