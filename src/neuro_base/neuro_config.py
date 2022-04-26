@@ -3,6 +3,6 @@ from dataclasses import dataclass
 
 @dataclass
 class ConfigNNT:
-    K: int = 2
-    L: int = 4
-    N: int = 3
+    K: int = 3
+    L: int = 5
+    N: int = 16
