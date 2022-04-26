@@ -85,8 +85,11 @@ class AcceptOfferView(APIView):
             _invite = Invite.objects.select_related('from_user').get(pk=pk, to_user=request.user)
         except Invite.DoesNotExist:
             return Response({'error': 'Invite does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        _from_user = _invite.from_user
         _user = SecureUser.objects.get(pk=request.user.pk)
-        _user.safe_user.add(_invite.from_user)
+        _user.safe_user.add(_from_user)
         _user.save()
+        _from_user.safe_user.add(_user)
+        _from_user.save()
         _invite.delete()
         return Response({'msg': 'User added successfully'}, status=status.HTTP_201_CREATED)
