@@ -26,4 +26,5 @@ class Message(models.Model):
     create_at = models.DateTimeField(auto_now_add=True)
     content = models.BinaryField()
     is_active = models.BooleanField(default=True)
+    key = models.ForeignKey(Key, on_delete=models.SET_NULL, null=True, related_name='key_messages')
 
