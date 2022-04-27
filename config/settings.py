@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'djoser',
 
     'src.profiles',
+    'src.mes_app',
 ]
 
 MIDDLEWARE = [
