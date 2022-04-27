@@ -1,5 +1,6 @@
 from django.contrib.auth.hashers import make_password
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -16,6 +17,7 @@ from .serializers import (
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from src.base.classes import MixedPermission, CreateListDestroy, ListDestroy
 from src.base.permissions import IsAuthor
+from src.mes_app.service import generate_neuro_key
 
 
 class SecureUserView(MixedPermission, ModelViewSet):
@@ -55,7 +57,7 @@ class InviteSendView(CreateListDestroy):
         q = (Q(from_user=request.user) & Q(to_user=kwargs['pk'])) | (
                 Q(from_user=kwargs['pk']) & Q(to_user=request.user))
         if Invite.objects.filter(q).exists():
-            return Response({'error': 'Invite already exist'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Invite already exists'}, status=status.HTTP_404_NOT_FOUND)
         if request.user.pk == kwargs['pk']:
             return Response({'error': 'You can not invite yourself'}, status=status.HTTP_404_NOT_FOUND)
         try:
@@ -75,7 +77,7 @@ class InviteReceiveView(ListDestroy):
         return Invite.objects.filter(to_user=self.request.user)
 
 
-class AcceptOfferView(APIView):
+class InviteAcceptView(APIView):
     """ Accept offer and Add into friend
     """
     permission_classes = (IsAuthenticated,)
@@ -92,4 +94,20 @@ class AcceptOfferView(APIView):
         _from_user.safe_user.add(_user)
         _from_user.save()
         _invite.delete()
+        generate_neuro_key(_user, _from_user)
         return Response({'msg': 'User added successfully'}, status=status.HTTP_201_CREATED)
+
+
+class DeleteFriendView(APIView):
+    """ Delete friend
+    """
+    permission_classes = (IsAuthenticated,)
+
+    def patch(self, request, pk):
+        current_user = SecureUser.objects.get(pk=request.user.pk)
+        delete_user = get_object_or_404(SecureUser, pk=pk)
+        current_user.safe_user.remove(delete_user)
+        delete_user.safe_user.remove(current_user)
+        current_user.save()
+        delete_user.save()
+        return Response({'msg': 'User deleted successfully'}, status=status.HTTP_200_OK)
