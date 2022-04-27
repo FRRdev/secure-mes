@@ -1,7 +1,5 @@
 import random
 
-from typing import List
-
 from src.neuro_base.neuro_config import ConfigNNT
 from src.neuro_base.tpm import TPM, Perceptron
 from Crypto.Cipher import Blowfish
@@ -35,26 +33,42 @@ def get_secret_key_for_message(name_tmp1: str, name_tpm_2: str, trace: bool = Tr
         tpm2.print_tmp_weights()
 
     weight_to_str = ''.join([str(elem) for item in tpm1.weights for elem in item])
-    return weight_to_str
+    weight_to_str_correct = weight_to_str if len(weight_to_str) <= 56 else weight_to_str[:56]
+    return weight_to_str_correct
 
+
+def text_mod_8(text: bytes) -> bytes:
+    """ Message length change function
+    """
+    while len(text) % 8 != 0:
+        text += b' '
+    return text
+
+
+def encode_message(text: str, key: str) -> bytes:
+    """ Encoding of the message using the algorithm Blowfish
+    """
+    key_to_bytes = bytes(key, encoding='utf-8')
+    blow = Blowfish.new(key_to_bytes, Blowfish.MODE_ECB)
+    text_to_bytes = bytes(text, encoding='utf-8')
+    padded_text = text_mod_8(text_to_bytes)
+    encrypted_text = blow.encrypt(padded_text)
+    return encrypted_text
 
 # secret = get_secret_key_for_message('Misha', 'Maks', False)
 # print(secret)
 # secret_to_str = ''.join([str(elem) for item in secret for elem in item])
-# key = bytes(secret_to_str, encoding='utf-8')
+# key = bytes('4524152532-124-543554245-4445-2-355-243-424535355-334514', encoding='utf-8')
 #
 #
-# def pad(text):
-#     while len(text) % 8 != 0:
-#         text += b' '
-#     return text
 #
 #
 # des = Blowfish.new(key, Blowfish.MODE_ECB)
-# text = 'It should be work!'
+# text = 'Hello'
 # text = bytes(text, encoding='utf-8')
-# padded_text = pad(text)
-#
+# padded_text = text_mod_8(text)
+# print(padded_text)
+# #
 # encrypted_text = des.encrypt(padded_text)
 # print(encrypted_text)
 #
