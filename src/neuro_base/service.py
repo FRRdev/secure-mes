@@ -55,22 +55,12 @@ def encode_message(text: str, key: str) -> bytes:
     encrypted_text = blow.encrypt(padded_text)
     return encrypted_text
 
-# secret = get_secret_key_for_message('Misha', 'Maks', False)
-# print(secret)
-# secret_to_str = ''.join([str(elem) for item in secret for elem in item])
-# key = bytes('4524152532-124-543554245-4445-2-355-243-424535355-334514', encoding='utf-8')
-#
-#
-#
-#
-# des = Blowfish.new(key, Blowfish.MODE_ECB)
-# text = 'Hello'
-# text = bytes(text, encoding='utf-8')
-# padded_text = text_mod_8(text)
-# print(padded_text)
-# #
-# encrypted_text = des.encrypt(padded_text)
-# print(encrypted_text)
-#
-# data = des.decrypt(encrypted_text)
-# print(data.decode('utf-8'))
+
+def decode_message(encoded_text: bytes, key: str) -> str:
+    """ Decoding of the message using the algorithm Blowfish
+    """
+    key_to_bytes = bytes(key, encoding='utf-8')
+    blow = Blowfish.new(key_to_bytes, Blowfish.MODE_ECB)
+    text_utf = blow.decrypt(encoded_text)
+    decoded_text = text_utf.decode('utf-8')
+    return decoded_text
