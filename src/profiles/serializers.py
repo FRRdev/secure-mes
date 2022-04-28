@@ -26,6 +26,17 @@ class GetPublicSecureUserSerializer(serializers.ModelSerializer):
         )
 
 
+class GetPublicMessageUserSerializer(serializers.ModelSerializer):
+    """ Output of public info about the user to use in message
+    """
+
+    class Meta:
+        model = SecureUser
+        fields = (
+            'id', 'username', 'first_name', 'last_name', 'email'
+        )
+
+
 class GetUserForInvite(serializers.ModelSerializer):
     """ Output of public info about the user in invite view
     """
