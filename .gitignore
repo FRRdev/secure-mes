@@ -34,3 +34,7 @@ make.bat
 Makefile
 
 doc-dev
+
+celerybeat-schedule.bak
+celerybeat-schedule.dat
+celerybeat-schedule.dir
