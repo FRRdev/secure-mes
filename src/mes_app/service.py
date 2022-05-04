@@ -10,3 +10,12 @@ def generate_neuro_key(first_user: SecureUser, second_user: SecureUser) -> None:
     neuro_key = get_secret_key_for_message('TMP_A', 'TPM_B', trace=False)
     key = Key.objects.create(value=neuro_key)
     CurrentKey.objects.create(first_user=first_user, second_user=second_user, key=key)
+
+
+def refresh_neuro_key(ck: CurrentKey):
+    """ Generate secret neuro key
+    """
+    neuro_key = get_secret_key_for_message('TMP_A', 'TPM_B', trace=False)
+    key = Key.objects.create(value=neuro_key)
+    ck.key = key
+    ck.save()

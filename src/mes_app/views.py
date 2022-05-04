@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.views import APIView
 
+from src.mes_app.service import refresh_neuro_key
 from src.neuro_base.service import encode_message, decode_message
 from src.mes_app.models import Message, CurrentKey
 from src.mes_app.serializers import (
@@ -77,3 +78,16 @@ class ListReceiveMessageView(ListAPIView):
 
     def get_queryset(self):
         return Message.objects.filter(recipient=self.request.user)
+
+
+class ResetCurrentKeyView(APIView):
+    """ Reset neuro key
+    """
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, pk):
+        q = (Q(first_user=request.user) & Q(second_user=pk)) | (
+                Q(first_user=pk) & Q(second_user=request.user))
+        ck = get_object_or_404(CurrentKey, q)
+        refresh_neuro_key(ck)
+        return Response({'msg': 'Key refreshed successfully'}, status=status.HTTP_200_OK)
