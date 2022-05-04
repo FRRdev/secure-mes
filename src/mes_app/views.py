@@ -1,5 +1,6 @@
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
+from django.views.decorators.cache import cache_page
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -35,6 +36,7 @@ def create_message(request, pk):
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
+@cache_page(60 * 15)
 def read_message(request, pk):
     """ Read message by message's pk
     """

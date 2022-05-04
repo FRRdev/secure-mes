@@ -10,6 +10,7 @@ dist
 db.sqlite3
 
 venv
+secure_cache
 
 .env.dev
 prod_settings.py
