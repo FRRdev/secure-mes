@@ -1,6 +1,43 @@
 version: '3.7'
 
 services:
+  redis:
+    container_name: redis
+    image: redis:6.2-alpine
+    links:
+      - db
+
+  celery-worker:
+    build: ./
+    container_name: celery-worker
+    command: celery -A config worker -l info --concurrency 1 -P solo
+    volumes:
+      - .:/usr/src/app
+    env_file:
+      - ./.env.dev
+    links:
+      - redis
+      - db
+    depends_on:
+      - redis
+      - db
+
+  celery-beat:
+    build: ./
+    container_name: celery-beat
+    command: celery -A config beat -l info
+    volumes:
+      - .:/usr/src/app
+    env_file:
+      - ./.env.dev
+    links:
+      - celery-worker
+      - redis
+      - db
+    depends_on:
+      - celery-worker
+      - redis
+      - db
   web:
     build: ./
     container_name: secure_mes_web
@@ -24,6 +61,7 @@ services:
       - ./.env.dev
     ports:
       - 5432:5432
+
 
 volumes:
   secure_postgres_data:
