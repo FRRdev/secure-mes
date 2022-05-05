@@ -12,6 +12,10 @@ Service for sending messages and encrypting them using neurocriptography algorit
 - DRF >= 3.10
 - Django ORM
 - Postgres
+- Celery
+- Redis
+
+
 
 
 
