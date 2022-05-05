@@ -8,6 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.views import APIView
 
+from src.neuro_base.tasks import refresh_all_current_key
 from src.mes_app.service import refresh_neuro_key
 from src.neuro_base.service import encode_message, decode_message
 from src.mes_app.models import Message, CurrentKey

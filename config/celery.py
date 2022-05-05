@@ -13,4 +13,10 @@ app.conf.beat_schedule = {
         'task': 'src.neuro_base.tasks.refresh_all_current_key',
         'schedule': crontab(minute='*/5'),
     },
+    'delete_unused_keys_every_5_min': {
+        'task': 'src.neuro_base.tasks.delete_unused_keys',
+        'schedule': crontab(minute='*/5'),
+    },
 }
+
+
