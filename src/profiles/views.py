@@ -2,6 +2,7 @@ from django.contrib.auth.hashers import make_password
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework import status
+from rest_framework.generics import RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
@@ -11,6 +12,7 @@ from .models import SecureUser, Invite
 from .serializers import (
     CreateSecureUserSerializer,
     GetPublicSecureUserSerializer,
+    GetDetailSecureUserSerializer,
     ListSendInviteSerializer,
     ListReceiveInviteSerializer
 )
@@ -42,6 +44,16 @@ class SecureUserView(MixedPermission, ModelViewSet):
         password_hash = make_password(password)
         serializer.validated_data['password'] = password_hash
         serializer.save()
+
+
+class UserDetailView(RetrieveAPIView):
+    """ Detail info about user
+    """
+    permission_classes = (IsAuthenticated,)
+    serializer_class = GetDetailSecureUserSerializer
+
+    def get_object(self):
+        return self.request.user
 
 
 class InviteSendView(CreateListDestroy):

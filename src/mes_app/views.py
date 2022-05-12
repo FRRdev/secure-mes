@@ -94,3 +94,6 @@ class ResetCurrentKeyView(APIView):
         ck = get_object_or_404(CurrentKey, q)
         refresh_neuro_key(ck)
         return Response({'msg': 'Key refreshed successfully'}, status=status.HTTP_200_OK)
+
+
+

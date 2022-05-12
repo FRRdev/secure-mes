@@ -7,6 +7,7 @@ router = routers.SimpleRouter()
 router.register(r'secureuser', views.SecureUserView, basename="secureuser")
 
 urlpatterns = [
+                  path("secureuser/detail/", views.UserDetailView.as_view(), name="user_detail"),
                   path("invite/send/", views.InviteSendView.as_view({'get': 'list'}), name="list_invite_send"),
                   path("invite/send/<int:pk>/", views.InviteSendView.as_view({'post': 'create', 'delete': 'destroy'}),
                        name="create_invite_send"),

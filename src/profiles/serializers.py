@@ -14,6 +14,16 @@ class CreateSecureUserSerializer(serializers.ModelSerializer):
         )
 
 
+class GetShorUserInfoSerializer(serializers.ModelSerializer):
+    """ Get Short info about User
+    """
+    class Meta:
+        model = SecureUser
+        fields = (
+            'id', 'username', 'first_name', 'last_name', 'email',
+        )
+
+
 class GetPublicSecureUserSerializer(serializers.ModelSerializer):
     """ Output of public info about the user
     """
@@ -24,6 +34,12 @@ class GetPublicSecureUserSerializer(serializers.ModelSerializer):
             'id', 'username', 'first_name', 'last_name', 'email', 'date_joined', 'phone', 'date_of_birth', 'gender',
             'city', 'bio', 'safe_user', 'is_active', 'is_superuser'
         )
+
+
+class GetDetailSecureUserSerializer(GetPublicSecureUserSerializer):
+    """ Detail user serializer
+    """
+    safe_user = GetShorUserInfoSerializer(many=True)
 
 
 class GetPublicMessageUserSerializer(serializers.ModelSerializer):
