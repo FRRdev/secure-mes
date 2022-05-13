@@ -9,4 +9,5 @@ urlpatterns = [
     path("refresh/<int:pk>/", views.ResetCurrentKeyView.as_view(), name="refresh_key"),
     path("send/list/", views.ListSendMessageView.as_view(), name="list_send_message"),
     path("receive/list/", views.ListReceiveMessageView.as_view(), name="list_receive_message"),
+    path("statistic/", views.StatisticMesInfoView.as_view(), name='statistic'),
 ]

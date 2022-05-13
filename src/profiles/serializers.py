@@ -17,6 +17,7 @@ class CreateSecureUserSerializer(serializers.ModelSerializer):
 class GetShorUserInfoSerializer(serializers.ModelSerializer):
     """ Get Short info about User
     """
+
     class Meta:
         model = SecureUser
         fields = (

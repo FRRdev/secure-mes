@@ -1,4 +1,4 @@
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.shortcuts import get_object_or_404
 from django.views.decorators.cache import cache_page
 from rest_framework.generics import ListAPIView
@@ -9,6 +9,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 
 from src.neuro_base.tasks import refresh_all_current_key
+from src.profiles.models import SecureUser
 from src.mes_app.service import refresh_neuro_key
 from src.neuro_base.service import encode_message, decode_message
 from src.mes_app.models import Message, CurrentKey
@@ -16,6 +17,7 @@ from src.mes_app.serializers import (
     MessageCreateReadSerializer,
     GetMessageSendSerializer,
     GetMessageReceiveSerializer,
+    GetStatisticSerializer
 )
 
 
@@ -70,7 +72,7 @@ class ListSendMessageView(ListAPIView):
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        return Message.objects.filter(sender=self.request.user)
+        return Message.objects.select_related('recipient').filter(sender=self.request.user)
 
 
 class ListReceiveMessageView(ListAPIView):
@@ -80,7 +82,7 @@ class ListReceiveMessageView(ListAPIView):
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        return Message.objects.filter(recipient=self.request.user)
+        return Message.objects.select_related('sender').filter(recipient=self.request.user)
 
 
 class ResetCurrentKeyView(APIView):
@@ -96,4 +98,19 @@ class ResetCurrentKeyView(APIView):
         return Response({'msg': 'Key refreshed successfully'}, status=status.HTTP_200_OK)
 
 
+class StatisticMesInfoView(APIView):
+    """ Get statistic about user's messages
+    """
+    permission_classes = (IsAuthenticated,)
 
+    def get(self, request):
+        total_count_messages = Message.objects.filter(sender=request.user).count()
+
+        top_users = SecureUser.objects.prefetch_related('recipient_mes').annotate(
+            cnt=Count(Q(recipient_mes__sender=request.user))
+        ).exclude(pk=request.user.pk).filter(cnt__gt=0).order_by('-cnt').all()[:3]
+
+        serializer = GetStatisticSerializer(
+            data={'total_count_messages': total_count_messages, 'top_users': list(top_users.values())})
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)
