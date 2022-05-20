@@ -108,7 +108,7 @@ class StatisticMesInfoView(APIView):
 
         top_users = SecureUser.objects.prefetch_related('recipient_mes').annotate(
             cnt=Count(Q(recipient_mes__sender=request.user))
-        ).exclude(pk=request.user.pk).filter(cnt__gt=0).order_by('-cnt').all()[:3]
+        ).exclude(pk=request.user.pk).filter(cnt__gt=0).order_by('-cnt')[:3]
 
         serializer = GetStatisticSerializer(
             data={'total_count_messages': total_count_messages, 'top_users': list(top_users.values())})
