@@ -4,6 +4,9 @@ import functools
 
 
 def query_debugger(func):
+    """ Custom query debugger to control requests to db
+    """
+
     @functools.wraps(func)
     def inner_func(*args, **kwargs):
         reset_queries()
