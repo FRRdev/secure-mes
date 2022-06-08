@@ -2,6 +2,8 @@ from rest_framework import serializers
 from .models import Post
 from . import services
 
+from src.profiles.serializers import GetShorUserInfoSerializer
+
 
 class PostSerializer(serializers.ModelSerializer):
     is_fan = serializers.SerializerMethodField()
@@ -22,3 +24,20 @@ class PostSerializer(serializers.ModelSerializer):
         """
         user = self.context.get('request').user
         return services.is_fan(obj, user)
+
+
+class DetailPostSerializer(PostSerializer):
+    allowed_users = GetShorUserInfoSerializer(many=True)
+    likes = serializers.StringRelatedField(many=True)
+
+    class Meta:
+        model = Post
+        fields = (
+            'id',
+            'title',
+            'content',
+            'allowed_users',
+            'is_fan',
+            'total_likes',
+            'likes'
+        )

@@ -29,6 +29,9 @@ class SecureUser(AbstractUser):
         settings.AUTH_USER_MODEL, blank=True, default=[], related_name='safe_users'
     )
 
+    def __str__(self):
+        return f'User {self.first_name} {self.last_name}'
+
 
 class Invite(models.Model):
     """ Invite's model between users

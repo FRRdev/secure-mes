@@ -38,3 +38,5 @@ doc-dev
 celerybeat-schedule.bak
 celerybeat-schedule.dat
 celerybeat-schedule.dir
+
+test.py
