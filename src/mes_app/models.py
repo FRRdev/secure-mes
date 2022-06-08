@@ -27,4 +27,3 @@ class Message(models.Model):
     content = models.BinaryField()
     is_active = models.BooleanField(default=True)
     key = models.ForeignKey(Key, on_delete=models.SET_NULL, null=True, related_name='key_messages')
-

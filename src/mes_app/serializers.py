@@ -1,7 +1,22 @@
 from rest_framework import serializers
 
-from src.mes_app.models import Message
+from src.mes_app.models import Message, CurrentKey, Key
 from src.profiles.serializers import GetPublicMessageUserSerializer, GetShorUserInfoSerializer
+
+
+class BaseMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Message
+        fields = '__all__'
+
+
+class CurrentKeySerializer(serializers.ModelSerializer):
+    count_message = serializers.IntegerField()
+    key_messages = BaseMessageSerializer(many=True)
+
+    class Meta:
+        model = Key
+        fields = ('id', 'value', 'create_at', 'count_message', 'key_messages')
 
 
 class MessageCreateReadSerializer(serializers.Serializer):

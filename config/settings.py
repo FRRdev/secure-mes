@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
     'src.profiles',
     'src.mes_app',
+    'src.feed',
 ]
 
 MIDDLEWARE = [

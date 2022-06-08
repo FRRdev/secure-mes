@@ -21,6 +21,7 @@ urlpatterns = [
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 
-    path('user/', include('src.profiles.urls')),
-    path('message/', include('src.mes_app.urls')),
+    path('user/', include('src.profiles.urls'), name='user'),
+    path('message/', include('src.mes_app.urls'), name='message'),
+    path('post/', include('src.feed.urls'), name='post'),
 ]
