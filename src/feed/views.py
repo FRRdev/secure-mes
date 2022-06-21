@@ -11,8 +11,8 @@ from .mixins import LikedMixin
 
 @swagger_auto_schema(tags=["post"])
 class PostViewSet(LikedMixin, viewsets.ModelViewSet):
-    serializer_class = PostSerializer
-    permission_classes = (IsAuthor,)
+    """ Post CRUD View with likes
+    """
 
     def get_serializer_class(self):
         if self.action == 'retrieve':

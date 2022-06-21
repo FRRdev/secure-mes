@@ -6,6 +6,8 @@ from src.profiles.serializers import GetShorUserInfoSerializer
 
 
 class PostSerializer(serializers.ModelSerializer):
+    """ Post Serializers for create/list/update actions
+    """
     is_fan = serializers.SerializerMethodField()
 
     class Meta:
@@ -27,6 +29,8 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class DetailPostSerializer(PostSerializer):
+    """ Post serializer for retrieve action
+    """
     allowed_users = GetShorUserInfoSerializer(many=True)
     likes = serializers.StringRelatedField(many=True)
 

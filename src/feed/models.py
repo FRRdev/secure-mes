@@ -5,6 +5,8 @@ from django.contrib.contenttypes.models import ContentType
 
 
 class Post(models.Model):
+    """ Post model
+    """
     title = models.CharField(max_length=120)
     content = models.TextField()
     user = models.ForeignKey(
@@ -24,6 +26,8 @@ class Post(models.Model):
 
 
 class Like(models.Model):
+    """ Like model
+    """
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name='likes', on_delete=models.CASCADE
     )
@@ -33,3 +37,8 @@ class Like(models.Model):
 
     def __str__(self):
         return f'Like from {self.user}'
+
+
+
+
+
