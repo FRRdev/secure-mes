@@ -28,3 +28,13 @@ class ListDestroy(
     """
     """
     pass
+
+
+class CreateUpdateDestroy(mixins.CreateModelMixin,
+                          mixins.UpdateModelMixin,
+                          mixins.DestroyModelMixin,
+                          MixedPermission,
+                          viewsets.GenericViewSet):
+    """
+    """
+    pass
